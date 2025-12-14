@@ -7,12 +7,21 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "turbo run build",
-    "clean": "turbo run clean",
     "dev": "turbo run dev",
+    "dev:api": "pnpm --filter=api dev",
+    "dev:web": "pnpm --filter=web dev",
+    "build": "turbo run build",
+    "build:api": "pnpm --filter=api build",
+    "build:web": "pnpm --filter=web build",
+    "start": "pnpm --filter=api start",
+    "clean": "turbo run clean && rm -rf node_modules .turbo",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,json}\"",
+    "check-types": "turbo run check-types",
+    "db:studio": "echo 'Install Drizzle first: pnpm add -D drizzle-kit'",
+    "db:push": "echo 'Install Drizzle first'",
+    "db:migrate": "echo 'Install Drizzle first'"
   },
   "devDependencies": {
     "prettier": "^3.7.4",
