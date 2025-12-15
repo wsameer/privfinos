@@ -10,7 +10,8 @@
     "noEmit": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitReturns": true
+    "noImplicitReturns": true,
+    "allowImportingTsExtensions": true
   },
   "exclude": ["node_modules"]
 }
