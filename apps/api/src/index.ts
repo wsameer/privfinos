@@ -1,35 +1,56 @@
-import { serve } from '@hono/node-server';
-import { Hono } from 'hono';
-import { cors } from 'hono/cors';
-import { logger } from './lib/logger.js';
-import { env } from './lib/env.js';
-import { errorHandler } from './middleware/error-handler.js';
-import { requestLogger } from './middleware/request-logger.js';
-import health from './routes/health.js';
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { serve } from "@hono/node-server";
+import { serveStatic } from "@hono/node-server/serve-static";
+import { join } from "path";
+import { existsSync } from "fs";
+
+import { env } from "./lib/env.js";
+import { logger } from "./lib/logger.js";
+import { errorHandler } from "./middleware/error-handler.js";
+import { requestLogger } from "./middleware/request-logger.js";
+import health from "./routes/health.js";
 
 const app = new Hono();
 
 // Global middleware
-app.use('*', requestLogger);
+app.use("*", requestLogger);
 app.use(
-  '*',
+  "*",
   cors({
-    origin: env.CORS_ORIGIN.split(','),
+    origin: env.CORS_ORIGIN.split(","),
     credentials: true,
-  })
+  }),
 );
 
-// Routes
-app.route('/health', health);
+// API Routes (must come before static file serving)
+app.route("/api/health", health);
 
-// Root route
-app.get('/', (c) => {
+// API Root enpoint
+app.get("/api", (c) => {
   return c.json({
-    name: 'PrivFinOS API',
-    version: '0.0.1',
-    status: 'running',
+    name: "PrivFinOS API",
+    version: "1.0.0",
+    status: "running",
   });
 });
+
+// Serve static files in production (for frontend)
+if (env.NODE_ENV === "production") {
+  const webDistPath = join(process.cwd(), "..", "web", "dist");
+
+  if (existsSync(webDistPath)) {
+    logger.info(`Serving static files from: ${webDistPath}`);
+
+    // Serve static assets
+    app.use("/*", serveStatic({ root: webDistPath }));
+
+    // SPA fallback - serve index.html for all non-API routes
+    app.get("*", serveStatic({ path: join(webDistPath, "index.html") }));
+  } else {
+    logger.warn(`Web dist directory not found at: ${webDistPath}`);
+  }
+}
 
 // 404 handler
 app.notFound((c) => {
@@ -37,11 +58,11 @@ app.notFound((c) => {
     {
       success: false,
       error: {
-        message: 'Not found',
-        code: 'NOT_FOUND',
+        message: "Not found",
+        code: "NOT_FOUND",
       },
     },
-    404
+    404,
   );
 });
 
@@ -57,7 +78,7 @@ serve(
     port,
   },
   (info) => {
-    logger.info(`Server is running on http://localhost:${info.port}`);
+    logger.info(`Server is running on http://localhost:${info.port}/api`);
     logger.info(`Environment: ${env.NODE_ENV}`);
-  }
+  },
 );
