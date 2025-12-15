@@ -25,5 +25,11 @@
   "packageManager": "pnpm@8.15.6",
   "engines": {
     "node": ">=18"
+  },
+  "pnpm": {
+    "overrides": {
+      "sharp": "^0.33.5",
+      "sharp-ico": "^0.1.5"
+    }
   }
 }
