@@ -1,16 +1,29 @@
 {
+  "name": "privfinos",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:api": "pnpm --filter=api dev",
+    "dev:web": "pnpm --filter=web dev",
+    "build": "turbo run build",
+    "build:api": "pnpm --filter=api build",
+    "build:web": "pnpm --filter=web build",
+    "start": "pnpm --filter=api start",
+    "clean": "turbo run clean && rm -rf node_modules .turbo",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,json}\"",
+    "check-types": "turbo run check-types"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
     "prettier": "^3.2.5",
-    "turbo": "^2.6.3"
+    "turbo": "^2.6.3",
+    "typescript": "5.9.2"
   },
   "packageManager": "pnpm@8.15.6",
-  "name": "with-vite-react"
+  "engines": {
+    "node": ">=18"
+  }
 }
