@@ -15,13 +15,17 @@
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json}\"",
     "check-types": "turbo run check-types",
+    "db:generate": "pnpm --filter=@repo/db db:generate",
+    "db:push": "pnpm --filter=@repo/db db:push",
+    "db:studio": "pnpm --filter=@repo/db db:studio",
+    "db:seed": "pnpm --filter=@repo/db db:seed",
     "docker:build": "docker build -t privfinos:latest .",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",
     "docker:restart": "docker compose restart",
     "docker:clean": "docker compose down -v && docker system prune -f",
-    "docker:rebuild": "docker compose down && docker build --no-cache -t privinfos:latest . && docker compose up -d"
+    "docker:rebuild": "docker compose down && docker build --no-cache -t privfinos:latest . && docker compose up -d"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
