@@ -26,7 +26,7 @@ app.use(
 // API Routes (must come before static file serving)
 app.route("/api/health", health);
 
-// API Root enpoint
+// API root endpoint
 app.get("/api", (c) => {
   return c.json({
     name: "PrivFinOS API",
