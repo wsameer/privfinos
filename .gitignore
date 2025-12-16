@@ -36,15 +36,6 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
-<<<<<<< HEAD
-dist/
-compose.dev.yaml
-compose.yaml
-pnpm-workspace.yaml
-=======
 
 # Docker
 docker-compose.override.yml
-.env.production
-.env.local
->>>>>>> 5f8dac4 (dockerization of the app)
