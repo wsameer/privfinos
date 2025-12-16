@@ -1,0 +1,170 @@
+import { z } from "zod";
+
+// ============================================================================
+// Enums
+// ============================================================================
+
+export const CategoryTypeEnum = z.enum(["INCOME", "EXPENSE"]);
+export type CategoryType = z.infer<typeof CategoryTypeEnum>;
+
+export const AccountTypeEnum = z.enum([
+  "CHECKING",
+  "SAVINGS",
+  "CREDIT_CARD",
+  "INVESTMENT",
+  "CASH",
+  "LOAN",
+  "OTHER",
+]);
+export type AccountType = z.infer<typeof AccountTypeEnum>;
+
+export const TransactionTypeEnum = z.enum(["INCOME", "EXPENSE", "TRANSFER"]);
+export type TransactionType = z.infer<typeof TransactionTypeEnum>;
+
+// ============================================================================
+// Category Schemas
+// ============================================================================
+
+export const CategorySchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1).max(100),
+  type: CategoryTypeEnum,
+  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).nullable(),
+  icon: z.string().max(50).nullable(),
+  parentId: z.string().uuid().nullable(),
+  sortOrder: z.number().int().default(0),
+  isActive: z.boolean().default(true),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
+export const InsertCategorySchema = CategorySchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).partial({
+  color: true,
+  icon: true,
+  parentId: true,
+  sortOrder: true,
+  isActive: true,
+});
+
+export const UpdateCategorySchema = InsertCategorySchema.partial();
+
+export type Category = z.infer<typeof CategorySchema>;
+export type InsertCategory = z.infer<typeof InsertCategorySchema>;
+export type UpdateCategory = z.infer<typeof UpdateCategorySchema>;
+
+// ============================================================================
+// Account Schemas
+// ============================================================================
+
+export const AccountSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1).max(100),
+  type: AccountTypeEnum,
+  balance: z.number().default(0),
+  currency: z.string().length(3).default("USD"),
+  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).nullable(),
+  icon: z.string().max(50).nullable(),
+  isActive: z.boolean().default(true),
+  notes: z.string().max(500).nullable(),
+  sortOrder: z.number().int().default(0),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
+export const InsertAccountSchema = AccountSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).partial({
+  balance: true,
+  currency: true,
+  color: true,
+  icon: true,
+  isActive: true,
+  notes: true,
+  sortOrder: true,
+});
+
+export const UpdateAccountSchema = InsertAccountSchema.partial();
+
+export type Account = z.infer<typeof AccountSchema>;
+export type InsertAccount = z.infer<typeof InsertAccountSchema>;
+export type UpdateAccount = z.infer<typeof UpdateAccountSchema>;
+
+// ============================================================================
+// Transaction Schemas
+// ============================================================================
+
+export const TransactionSchema = z.object({
+  id: z.string().uuid(),
+  accountId: z.string().uuid(),
+  categoryId: z.string().uuid().nullable(),
+  type: TransactionTypeEnum,
+  amount: z.number(),
+  description: z.string().min(1).max(200),
+  notes: z.string().max(1000).nullable(),
+  date: z.date(),
+  // For transfers
+  toAccountId: z.string().uuid().nullable(),
+  // Additional metadata
+  tags: z.array(z.string()).default([]),
+  receiptUrl: z.string().url().nullable(),
+  isReconciled: z.boolean().default(false),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
+export const InsertTransactionSchema = TransactionSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).partial({
+  categoryId: true,
+  notes: true,
+  toAccountId: true,
+  tags: true,
+  receiptUrl: true,
+  isReconciled: true,
+});
+
+export const UpdateTransactionSchema = InsertTransactionSchema.partial();
+
+export type Transaction = z.infer<typeof TransactionSchema>;
+export type InsertTransaction = z.infer<typeof InsertTransactionSchema>;
+export type UpdateTransaction = z.infer<typeof UpdateTransactionSchema>;
+
+// ============================================================================
+// Query Schemas (for API endpoints)
+// ============================================================================
+
+export const CategoryQuerySchema = z.object({
+  type: CategoryTypeEnum.optional(),
+  isActive: z.boolean().optional(),
+  parentId: z.string().uuid().optional().nullable(),
+});
+
+export const AccountQuerySchema = z.object({
+  type: AccountTypeEnum.optional(),
+  isActive: z.boolean().optional(),
+});
+
+export const TransactionQuerySchema = z.object({
+  accountId: z.string().uuid().optional(),
+  categoryId: z.string().uuid().optional(),
+  type: TransactionTypeEnum.optional(),
+  startDate: z.string().datetime().optional(),
+  endDate: z.string().datetime().optional(),
+  minAmount: z.number().optional(),
+  maxAmount: z.number().optional(),
+  search: z.string().optional(),
+  limit: z.number().int().min(1).max(100).default(50),
+  offset: z.number().int().min(0).default(0),
+});
+
+export type CategoryQuery = z.infer<typeof CategoryQuerySchema>;
+export type AccountQuery = z.infer<typeof AccountQuerySchema>;
+export type TransactionQuery = z.infer<typeof TransactionQuerySchema>;
