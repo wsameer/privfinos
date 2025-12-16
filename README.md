@@ -5,12 +5,11 @@ A self-hosted, lightweight, privacy-first financial OS built with modern technol
 ## Tech Stack
 
 - **Monorepo**: Turborepo + pnpm workspaces
-- **Frontend**: React 19 + Vite + TypeScript
+- **Frontend**: React 19 + Vite + TypeScript + PWA
 - **Backend**: Hono.js + Node.js
-- **Database**: PostgreSQL + Drizzle ORM (coming soon)
+- **Database**: PostgreSQL 16 + Drizzle ORM
 - **Validation**: Zod
 - **Logging**: Pino
-- **Reverse Proxy**: Caddy
 - **Container**: Docker + Docker Compose
 
 ## Project Structure
@@ -18,29 +17,27 @@ A self-hosted, lightweight, privacy-first financial OS built with modern technol
 ```
 privfinos/
 ├── apps/
-│   ├── api/              # Hono.js backend API
+│   ├── api/                      # Hono.js backend API
 │   │   ├── src/
-│   │   │   ├── lib/      # Utilities (logger, env, errors)
-│   │   │   ├── middleware/  # Express middleware
-│   │   │   ├── routes/   # API routes
-│   │   │   └── index.ts  # Entry point
-│   │   ├── Dockerfile
+│   │   │   ├── lib/              # Utilities (logger, env, db)
+│   │   │   ├── middleware/       # Request middleware
+│   │   │   ├── routes/           # API routes
+│   │   │   └── index.ts          # Entry point + static file serving
 │   │   └── package.json
-│   └── web/              # React frontend
+│   └── web/                      # React + Vite PWA frontend
 │       ├── src/
-│       ├── Dockerfile
-│       ├── nginx.conf
+│       ├── vite.config.ts        # PWA configuration
 │       └── package.json
 ├── packages/
-│   ├── types/            # Shared TypeScript types + Zod schemas
-│   ├── ui/               # Shared React components
-│   ├── typescript-config/  # Shared TS configs
-│   └── eslint-config/    # Shared ESLint configs
-├── docker-compose.yml          # Production setup
-├── docker-compose.dev.yml      # Development (DB only)
-├── Caddyfile                   # Production Caddy config
-├── Caddyfile.dev              # Dev Caddy config
-└── turbo.json
+│   ├── db/                       # Drizzle ORM + schemas
+│   ├── types/                    # Shared TypeScript types + Zod schemas
+│   ├── ui/                       # Shared React components
+│   ├── typescript-config/        # Shared TS configs
+│   └── eslint-config/            # Shared ESLint configs
+├── Dockerfile                    # Multi-stage production build
+├── docker-compose.yml            # Container orchestration
+├── .env.example                  # Environment template
+└── turbo.json                    # Turborepo configuration
 ```
 
 ## Getting Started
@@ -61,12 +58,27 @@ pnpm install
 
 #### Option 1: Local Development (Recommended for development)
 
-1. Start the database:
+1. **Set up environment variables**:
 ```bash
-pnpm docker:dev:up
+cp .env.example .env
+# Edit .env if you need to change any values (defaults should work)
 ```
 
-2. Start the dev servers (runs both API and Web with hot reload):
+2. **Start PostgreSQL database**:
+```bash
+docker compose up -d db
+```
+
+3. **Set up database schema and seed data**:
+```bash
+# Push schema to database
+pnpm db:push
+
+# Seed with sample data (optional but recommended)
+pnpm db:seed
+```
+
+4. **Start the dev servers** (runs both API and Web with hot reload):
 ```bash
 pnpm dev
 ```
@@ -80,29 +92,50 @@ pnpm dev:api
 pnpm dev:web
 ```
 
-3. Access the app:
+5. **Access the app**:
    - Frontend: http://localhost:5173
    - API: http://localhost:3001
-   - API Health: http://localhost:3001/health
+   - API Health: http://localhost:3001/api/health
+   - Drizzle Studio: `pnpm db:studio` → http://localhost:4983
 
-#### Option 2: Full Docker Stack (Production-like)
+#### Option 2: Full Docker Stack (Production)
 
+1. **Configure environment**:
 ```bash
-# Build and start all services (API, Web, DB, Caddy)
-pnpm docker:prod:build
-pnpm docker:prod:up
-
-# View logs
-pnpm docker:prod:logs
-
-# Stop services
-pnpm docker:prod:down
+cp .env.production.example .env.production
+# Edit .env.production and set a secure database password
 ```
 
-Access via Caddy:
-- Frontend: http://localhost
-- API: http://localhost/api
-- Health: http://localhost/health
+2. **Start all services** (app + database):
+```bash
+pnpm docker:up
+```
+
+3. **Set up database** (first time only):
+```bash
+# Access the app container
+docker exec -it privfinos-app sh
+
+# Push schema and seed data
+pnpm db:push
+pnpm db:seed
+exit
+```
+
+4. **Access the app**:
+   - App: http://localhost:3001
+   - API: http://localhost:3001/api
+   - Health: http://localhost:3001/api/health
+
+5. **View logs**:
+```bash
+pnpm docker:logs
+```
+
+6. **Stop services**:
+```bash
+pnpm docker:down
+```
 
 ### Environment Variables
 
@@ -143,10 +176,20 @@ pnpm build:web
 - `pnpm build:api` - Build API
 - `pnpm build:web` - Build Web
 
-**Docker (Development - DB only):**
-- `pnpm docker:dev:up` - Start database
-- `pnpm docker:dev:down` - Stop database
-- `pnpm docker:dev:logs` - View database logs
+**Database:**
+- `pnpm db:generate` - Generate migrations from schema
+- `pnpm db:push` - Push schema to database
+- `pnpm db:studio` - Open Drizzle Studio (visual DB browser)
+- `pnpm db:seed` - Seed database with sample data
+
+**Docker (Production):**
+- `pnpm docker:build` - Build Docker image
+- `pnpm docker:up` - Start all services (app + db)
+- `pnpm docker:down` - Stop all services
+- `pnpm docker:logs` - View logs
+- `pnpm docker:restart` - Restart services
+- `pnpm docker:clean` - Remove containers and volumes
+- `pnpm docker:rebuild` - Rebuild from scratch
 
 **Docker (Production - Full Stack):**
 - `pnpm docker:prod:build` - Build all containers
@@ -172,36 +215,40 @@ pnpm build:web
 - **Hono.js**: Ultra-lightweight, edge-ready, great TypeScript support
 - **Zod**: Runtime type validation, pairs perfectly with TypeScript
 - **Pino**: Fast, structured JSON logging
-- **Caddy**: Automatic HTTPS, simple config, great for self-hosting
 - **pnpm**: Fast, efficient, great monorepo support
 - **Turborepo**: Optimal build caching and task orchestration
+- **PWA**: Installable on iOS/Android for native-like experience
 
 ### Key Features
 
 ✅ **Type-Safe**: End-to-end type safety with shared types package
 ✅ **Validated**: Runtime validation with Zod schemas
 ✅ **Observable**: Structured logging with Pino
-✅ **Secure**: CORS, security headers, error handling
+✅ **Database**: PostgreSQL + Drizzle ORM with migrations
 ✅ **Production-Ready**: Docker, health checks, graceful shutdown
 ✅ **Developer-Friendly**: Hot reload, clear errors, fast builds
-✅ **Self-Hostable**: Easy deployment with Docker Compose + Caddy
+✅ **Self-Hostable**: Easy deployment with Docker Compose
+✅ **PWA-Ready**: Install on iOS/Android devices
 
-## Next Steps
+## What's Included
 
-### Immediate Tasks
-1. ✅ Set up repository structure
-2. ✅ Configure shared types and configs
-3. ✅ Add environment variable validation
-4. ✅ Set up logging and error handling
-5. ✅ Create Docker setup with Caddy
+### ✅ Already Set Up
+1. Monorepo with Turborepo + pnpm workspaces
+2. Type-safe API with Hono.js
+3. React + Vite PWA frontend
+4. PostgreSQL database with Drizzle ORM
+5. Shared types and validation with Zod
+6. Database schema for accounts, transactions, categories
+7. Docker production deployment
+8. Structured logging and error handling
 
-### Coming Soon
-- [ ] Add Drizzle ORM + PostgreSQL integration
-- [ ] Implement authentication (JWT)
-- [ ] Add your financial domain models
-- [ ] Create API endpoints for your use cases
-- [ ] Build frontend components
-- [ ] Add database migrations
+### 🚧 Coming Soon
+- [ ] API endpoints for CRUD operations
+- [ ] Frontend UI components and pages
+- [ ] Transaction management features
+- [ ] Budget tracking
+- [ ] Reports and analytics
+- [ ] Data export/import
 - [ ] Set up CI/CD pipeline
 
 ## Contributing
