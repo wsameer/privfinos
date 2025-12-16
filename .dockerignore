@@ -71,4 +71,7 @@
 
 # Documentation
 README.md
-.DS_STORE
+LICENSE
+CHANGELOG.md
+**/*.md
+!**/node_modules/**/*.md
