@@ -2,11 +2,11 @@
   "extends": "@repo/typescript-config/react-app.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+    },
   },
   "include": ["src"],
-  "baseUrl": ".",
-  "paths": {
-    "@/*": ["./src/*"]
-  }
 }
