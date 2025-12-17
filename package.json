@@ -28,7 +28,7 @@
     "docker:rebuild": "docker compose down && docker build --no-cache -t privfinos:latest . && docker compose up -d"
   },
   "devDependencies": {
-    "eslint": "^8.57.0",
+    "eslint": "^9.39.2",
     "prettier": "^3.2.5",
     "turbo": "^2.6.3",
     "typescript": "5.5.4"
