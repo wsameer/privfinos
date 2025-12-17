@@ -1,19 +1,12 @@
-import reactLogo from "./assets/react.svg";
-import appLogo from "/favicon.svg";
 import PWABadge from "./PWABadge.tsx";
+import { Button } from "./components/ui/button.tsx";
 
 function App() {
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={appLogo} className="logo" alt="web logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className="flex min-h-svh flex-col items-center justify-center">
+        <Button>Click me</Button>
       </div>
-      <h1>SAM web app</h1>
       <PWABadge />
     </>
   );
