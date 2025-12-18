@@ -15,4 +15,4 @@ export function getDatabase(connectionString: string) {
 
 // Export schema and types
 export * from "./schema.js";
-export { sql, eq, and, or, desc, asc, count, sum } from "drizzle-orm";
+export { sql, eq, and, or, desc, asc, count, sum, isNull } from "drizzle-orm";

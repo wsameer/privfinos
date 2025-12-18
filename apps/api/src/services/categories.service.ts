@@ -4,7 +4,7 @@ import type {
   InsertCategory,
   UpdateCategory,
   CategoryQuery,
-} from "@repo/types";
+} from "@repo/types/db";
 import { AppError } from "../lib/errors.js";
 
 /**
@@ -96,7 +96,7 @@ export class CategoriesService {
         throw new AppError(
           400,
           "Category cannot be its own parent",
-          "INVALID_PARENT"
+          "INVALID_PARENT",
         );
       }
       await this.getById(data.parentId);
