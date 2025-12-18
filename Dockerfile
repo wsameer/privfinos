@@ -4,20 +4,16 @@
 # This builds both the web (React + Vite) and api (Hono.js) apps
 
 ARG NODE_VERSION=24.11.0
-ARG PNPM_VERSION=8.15.6
 
 ################################################################################
 # Base stage - Setup pnpm
 ################################################################################
 FROM node:${NODE_VERSION}-alpine AS base
 
-ARG PNPM_VERSION=8.15.6
-
-# Install pnpm
+# Install pnpm with explicit version
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
-RUN corepack prepare pnpm@${PNPM_VERSION} --activate
 
 # Set working directory
 WORKDIR /app
@@ -53,6 +49,7 @@ COPY --from=pruner /app/out/full/ .
 COPY turbo.json turbo.json
 
 # Build all apps and packages
+# Using turbo from devDependencies installed via pnpm install
 RUN pnpm turbo build
 
 ################################################################################
@@ -61,13 +58,11 @@ RUN pnpm turbo build
 FROM node:${NODE_VERSION}-alpine AS runner
 
 ARG NODE_VERSION=24.11.0
-ARG PNPM_VERSION=8.15.6
 
-# Install pnpm
+# Install pnpm with explicit version
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
-RUN corepack prepare pnpm@${PNPM_VERSION} --activate
 
 WORKDIR /app
 
