@@ -73,7 +73,7 @@ export const accounts = pgTable("accounts", {
   balance: numeric("balance", { precision: 15, scale: 2 })
     .notNull()
     .default("0"),
-  currency: varchar("currency", { length: 3 }).notNull().default("USD"),
+  currency: varchar("currency", { length: 3 }).notNull().default("CAD"),
   color: varchar("color", { length: 7 }),
   icon: varchar("icon", { length: 50 }),
   isActive: boolean("is_active").notNull().default(true),

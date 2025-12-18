@@ -4,21 +4,23 @@
 # This builds both the web (React + Vite) and api (Hono.js) apps
 
 ARG NODE_VERSION=24.11.0
-ARG PNPM_VERSION=9.15.2
+ARG PNPM_VERSION=8.15.6
 
 ################################################################################
-# Base stage - Setup pnpm and turbo
+# Base stage - Setup pnpm
 ################################################################################
 FROM node:${NODE_VERSION}-alpine AS base
 
+ARG PNPM_VERSION=8.15.6
+
 # Install pnpm
-RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+RUN corepack prepare pnpm@${PNPM_VERSION} --activate
 
 # Set working directory
 WORKDIR /app
-
-# Install turbo globally for better caching
-RUN pnpm add -g turbo
 
 ################################################################################
 # Pruner stage - Extract only necessary workspace files
@@ -29,7 +31,8 @@ COPY . .
 
 # Prune the workspace for the apps we want to build
 # This creates a minimal workspace with only the necessary dependencies
-RUN turbo prune web api --docker
+# Using pnpm dlx to download and execute turbo without global install
+RUN pnpm dlx turbo@2.6.3 prune web api --docker
 
 ################################################################################
 # Installer stage - Install dependencies
@@ -43,28 +46,34 @@ COPY --from=pruner /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
 
 # Install dependencies (including devDependencies for build)
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
-    pnpm install --frozen-lockfile
+  pnpm install --frozen-lockfile
 
 # Copy pruned source code
 COPY --from=pruner /app/out/full/ .
 COPY turbo.json turbo.json
 
 # Build all apps and packages
-RUN turbo build
+RUN pnpm turbo build
 
 ################################################################################
 # Runner stage - Production runtime with minimal footprint
 ################################################################################
 FROM node:${NODE_VERSION}-alpine AS runner
 
+ARG NODE_VERSION=24.11.0
+ARG PNPM_VERSION=8.15.6
+
 # Install pnpm
-RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+RUN corepack prepare pnpm@${PNPM_VERSION} --activate
 
 WORKDIR /app
 
 # Don't run production as root
 RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 hono
+  adduser --system --uid 1001 hono
 
 # Set to production environment
 ENV NODE_ENV=production
@@ -85,7 +94,7 @@ COPY --from=installer --chown=hono:nodejs /app/packages ./packages
 
 # Install only production dependencies
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
-    pnpm install --prod --frozen-lockfile
+  pnpm install --prod --frozen-lockfile
 
 USER hono
 

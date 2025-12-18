@@ -14,7 +14,7 @@ if (!DATABASE_URL) {
 async function seed() {
   console.log("🌱 Starting database seed...");
 
-  const db = getDatabase(DATABASE_URL);
+  const db = getDatabase(DATABASE_URL!);
 
   try {
     // ============================================================================
@@ -157,14 +157,12 @@ async function seed() {
     console.log(`✅ Created ${expenseCategories.length} expense categories`);
 
     // Create subcategories
-    const housingCategory = expenseCategories.find(
-      (c) => c.name === "Housing"
-    );
+    const housingCategory = expenseCategories.find((c) => c.name === "Housing");
     const transportCategory = expenseCategories.find(
-      (c) => c.name === "Transportation"
+      (c) => c.name === "Transportation",
     );
     const foodCategory = expenseCategories.find(
-      (c) => c.name === "Food & Dining"
+      (c) => c.name === "Food & Dining",
     );
 
     if (housingCategory) {
@@ -203,7 +201,7 @@ async function seed() {
         .returning();
 
       console.log(
-        `✅ Created ${housingSubcategories.length} housing subcategories`
+        `✅ Created ${housingSubcategories.length} housing subcategories`,
       );
     }
 
@@ -250,7 +248,7 @@ async function seed() {
         .returning();
 
       console.log(
-        `✅ Created ${transportSubcategories.length} transportation subcategories`
+        `✅ Created ${transportSubcategories.length} transportation subcategories`,
       );
     }
 
@@ -289,9 +287,7 @@ async function seed() {
         ])
         .returning();
 
-      console.log(
-        `✅ Created ${foodSubcategories.length} food subcategories`
-      );
+      console.log(`✅ Created ${foodSubcategories.length} food subcategories`);
     }
 
     // ============================================================================
@@ -354,7 +350,8 @@ async function seed() {
   - Expense categories: 10
   - Subcategories: ~13
   - Accounts: 4
-    `);
+    `,
+    );
 
     process.exit(0);
   } catch (error) {

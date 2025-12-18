@@ -6,7 +6,7 @@ CREATE TABLE "accounts" (
 	"name" varchar(100) NOT NULL,
 	"type" "account_type" NOT NULL,
 	"balance" numeric(15, 2) DEFAULT '0' NOT NULL,
-	"currency" varchar(3) DEFAULT 'USD' NOT NULL,
+	"currency" varchar(3) DEFAULT 'CAD' NOT NULL,
 	"color" varchar(7),
 	"icon" varchar(50),
 	"is_active" boolean DEFAULT true NOT NULL,
