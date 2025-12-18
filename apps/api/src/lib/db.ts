@@ -1,19 +1,21 @@
 import { getDatabase } from "@repo/db";
 import { env } from "./env.js";
 
-let db: ReturnType<typeof getDatabase> | null = null;
+let dbInstance: ReturnType<typeof getDatabase> | null = null;
 
 export function getDb() {
-  if (!db) {
+  if (!dbInstance) {
     if (!env.DATABASE_URL) {
       throw new Error(
         "DATABASE_URL is not defined. Please set it in your environment variables.",
       );
     }
-    db = getDatabase(env.DATABASE_URL);
+    dbInstance = getDatabase(env.DATABASE_URL);
   }
-  return db;
+  return dbInstance;
 }
 
-// Export commonly used helpers
+// Export singleton db instance for convenience
+export const db = getDb();
+
 export { sql, eq, and, or, desc, asc, count, sum } from "@repo/db";

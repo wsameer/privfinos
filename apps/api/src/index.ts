@@ -10,6 +10,8 @@ import { logger } from "./lib/logger.js";
 import { errorHandler } from "./middleware/error-handler.js";
 import { requestLogger } from "./middleware/request-logger.js";
 import health from "./routes/health.js";
+import categories from "./routes/categories.js";
+import accounts from "./routes/accounts.js";
 
 const app = new Hono();
 
@@ -25,6 +27,8 @@ app.use(
 
 // API Routes (must come before static file serving)
 app.route("/api/health", health);
+app.route("/api/categories", categories);
+app.route("/api/accounts", accounts);
 
 // API root endpoint
 app.get("/api", (c) => {

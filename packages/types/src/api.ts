@@ -1,8 +1,8 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // Health check response
 export const HealthCheckSchema = z.object({
-  status: z.enum(['ok', 'error']),
+  status: z.enum(["ok", "error"]),
   timestamp: z.string(),
   version: z.string().optional(),
 });
@@ -40,7 +40,7 @@ export const PaginationParamsSchema = z.object({
 export type PaginationParams = z.infer<typeof PaginationParamsSchema>;
 
 export const PaginatedResponseSchema = <T extends z.ZodTypeAny>(
-  itemSchema: T
+  itemSchema: T,
 ) =>
   z.object({
     items: z.array(itemSchema),
