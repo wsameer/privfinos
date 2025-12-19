@@ -1,5 +1,5 @@
 import PWABadge from "./PWABadge.tsx";
-import { Button } from "./components/ui/button.tsx";
+import { Button } from "@workspace/ui/components/button";
 
 function App() {
   return (
