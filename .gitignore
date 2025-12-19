@@ -5,6 +5,8 @@ node_modules
 .pnp
 .pnp.js
 
+# database
+privfinos-db/*
 
 # env
 .env
