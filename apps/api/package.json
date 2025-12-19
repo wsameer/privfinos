@@ -9,8 +9,8 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.19.6",
-    "@repo/db": "workspace:^",
-    "@repo/types": "workspace:*",
+    "@workspace/db": "workspace:^",
+    "@workspace/types": "workspace:*",
     "dotenv": "^17.2.3",
     "hono": "^4.11.1",
     "pino": "^10.1.0",
@@ -18,7 +18,7 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
     "@types/node": "^20.11.17",
     "tsx": "^4.7.1",
     "typescript": "^5.9.3"

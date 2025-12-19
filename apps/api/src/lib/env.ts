@@ -1,5 +1,5 @@
-import { ApiEnvSchema } from "@repo/types/env";
-import type { ApiEnv } from "@repo/types/env";
+import { ApiEnvSchema } from "@workspace/types/env";
+import type { ApiEnv } from "@workspace/types/env";
 import { loadEnvFiles } from "./env-loader.js";
 
 /**

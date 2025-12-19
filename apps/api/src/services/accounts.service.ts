@@ -1,6 +1,10 @@
 import { db } from "../lib/db.js";
-import { accounts, eq, and, desc } from "@repo/db";
-import type { InsertAccount, UpdateAccount, AccountQuery } from "@repo/types";
+import { accounts, eq, and, desc } from "@workspace/db";
+import type {
+  InsertAccount,
+  UpdateAccount,
+  AccountQuery,
+} from "@workspace/types";
 import { AppError } from "../lib/errors.js";
 
 /**

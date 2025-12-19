@@ -252,8 +252,8 @@ export type Category = z.infer<typeof CategorySchema>;
 
 ```typescript
 import { getDb, eq } from '@/lib/db';
-import { categories } from '@repo/db';
-import { InsertCategorySchema } from '@repo/types/db';
+import { categories } from '@workspace/db';
+import { InsertCategorySchema } from '@workspace/types/db';
 
 // Validate input
 const data = InsertCategorySchema.parse(req.body);
@@ -328,7 +328,7 @@ pnpm db:push
 
 # Production
 docker exec -it privfinos-app sh
-pnpm --filter=@repo/db db:push
+pnpm --filter=@workspace/db db:push
 ```
 
 ### Best Practices
@@ -429,7 +429,7 @@ await getDb().transaction(async (tx) => {
 
 ```typescript
 import { getDb, and, eq, gte, lte } from '@/lib/db';
-import { transactions } from '@repo/db';
+import { transactions } from '@workspace/db';
 
 // Complex query
 const results = await getDb()

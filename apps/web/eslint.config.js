@@ -10,7 +10,7 @@ export default defineConfig([
   {
     files: ["**/*.{ts,tsx}"],
     extends: [
-      "@repo/eslint-config/index.js",
+      "@workspace/eslint-config/index.js",
       js.configs.recommended,
       tseslint.configs.recommended,
       reactHooks.configs["recommended-latest"],

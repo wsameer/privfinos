@@ -1,4 +1,4 @@
-import { getDatabase } from "@repo/db";
+import { getDatabase } from "@workspace/db";
 import { env } from "./env.js";
 
 let dbInstance: ReturnType<typeof getDatabase> | null = null;
@@ -18,4 +18,4 @@ export function getDb() {
 // Export singleton db instance for convenience
 export const db = getDb();
 
-export { sql, eq, and, or, desc, asc, count, sum } from "@repo/db";
+export { sql, eq, and, or, desc, asc, count, sum } from "@workspace/db";

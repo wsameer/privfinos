@@ -1,5 +1,5 @@
 {
-  "name": "@repo/db",
+  "name": "@workspace/db",
   "version": "1.0.0",
   "description": "Database schema and utilities",
   "type": "module",
@@ -15,7 +15,11 @@
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx src/seed.ts"
   },
-  "keywords": ["database", "drizzle", "postgres"],
+  "keywords": [
+    "database",
+    "drizzle",
+    "postgres"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -24,7 +28,7 @@
     "postgres": "^3.4.7"
   },
   "devDependencies": {
-    "@repo/types": "workspace:*",
+    "@workspace/types": "workspace:*",
     "@types/pg": "^8.16.0",
     "drizzle-kit": "^0.31.8",
     "tsx": "^4.21.0"

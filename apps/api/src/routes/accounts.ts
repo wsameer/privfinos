@@ -5,9 +5,9 @@ import {
   InsertAccountSchema,
   UpdateAccountSchema,
   AccountQuerySchema,
-} from "@repo/types/db";
+} from "@workspace/types/db";
 import { z } from "zod";
-import type { ApiResponse } from "@repo/types/api";
+import type { ApiResponse } from "@workspace/types/api";
 
 /**
  * Accounts Routes

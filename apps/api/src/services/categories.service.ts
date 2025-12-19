@@ -1,10 +1,10 @@
 import { db } from "../lib/db.js";
-import { categories, eq, and, desc, isNull } from "@repo/db";
+import { categories, eq, and, desc, isNull } from "@workspace/db";
 import type {
   InsertCategory,
   UpdateCategory,
   CategoryQuery,
-} from "@repo/types/db";
+} from "@workspace/types/db";
 import { AppError } from "../lib/errors.js";
 
 /**

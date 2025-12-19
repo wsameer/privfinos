@@ -7,8 +7,8 @@ import {
   InsertCategorySchema,
   UpdateCategorySchema,
   CategoryQuerySchema,
-} from "@repo/types/db";
-import type { ApiResponse } from "@repo/types/api";
+} from "@workspace/types/db";
+import type { ApiResponse } from "@workspace/types/api";
 
 /**
  * Categories Routes
